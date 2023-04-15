@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import PostBrief from '../components/organisms/PostBrief';
 import postImg from '../data/photos/post-photo-mountains-1.jpg';

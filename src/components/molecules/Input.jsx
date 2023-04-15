@@ -9,22 +9,28 @@ const Input = ({
   id,
   value,
   onChange,
-  className
+  className,
+  error
 }) => (
-  <input
-    type={type}
-    placeholder={placeholder}
-    name={name}
-    id={id}
-    value={value}
-    onChange={onChange}
-    className={`
+  <>
+    <input
+      type={type}
+      placeholder={placeholder}
+      name={name}
+      id={id}
+      value={value}
+      onChange={onChange}
+      className={`
       border-b-2 border-gray-300 p-2 tracking-wide
       hover:mb-[2px] hover:border-none hover:shadow-md hover:outline hover:outline-2 hover:outline-teal-500
       focus:mb-[2px] focus:border-none focus:outline focus:outline-2 focus:outline-teal-500
-      ${className}`}
-    disabled={disabled}
-  />
+      ${className} ${
+        error && 'border-red-500 hover:outline-red-500 focus:outline-red-500'
+      }`}
+      disabled={disabled}
+    />
+    {error && <p className="relative text-xs italic text-red-500">{error}</p>}
+  </>
 );
 
 Input.propTypes = {
