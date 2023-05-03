@@ -1,32 +1,25 @@
-import React, { useEffect, useContext } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 
-import { UserContext } from '../../Providers/UserProvider';
+import { AuthContext } from '../../Providers/AuthProvider';
 
 const activeLink = 'p-4 text-teal-500 underline underline-offset-[10px]';
 const unactiveLink = 'p-4';
 
 const Navbar = () => {
-  const { userInfo, setUserInfo } = useContext(UserContext);
+  const { userInfo, logout, checkProfile } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+
+    navigate('/');
+  };
 
   useEffect(() => {
-    fetch('http://localhost:3000/profile', {
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(info => setUserInfo(info));
-  }, [setUserInfo]);
-
-  const logout = async () => {
-    await fetch('http://localhost:3000/logout', {
-      credentials: 'include',
-      method: 'POST'
-    })
-      .then(res => res.json())
-      .then(() => {
-        setUserInfo(null);
-      });
-  };
+    checkProfile();
+  }, [userInfo, checkProfile]);
 
   const name = userInfo?.name;
 
@@ -77,7 +70,7 @@ const Navbar = () => {
             >
               Utwórz post
             </NavLink>
-            <button onClick={logout} className={unactiveLink}>
+            <button onClick={handleLogout} className={unactiveLink}>
               Wyloguj się
             </button>
           </>

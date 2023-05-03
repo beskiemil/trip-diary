@@ -1,33 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import PostBrief from '../components/organisms/PostBrief';
 import postImg from '../data/photos/post-photo-mountains-1.jpg';
+import { PostContext } from '../Providers/PostProvider';
 
 // eslint-disable-next-line arrow-body-style
 const Home = () => {
+  const { data: postsData, status: postStatus } = useContext(PostContext);
+
+  if (postStatus === 'loading') return <p>loading...</p>;
+
   return (
     <main className="flex flex-col gap-12">
-      <PostBrief
-        author="Emil Beski"
-        date="14 kwietnia 2023"
-        title="Samochodem przez Tatry - lipiec 2022"
-        image={postImg}
-        briefText="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque consequat magna sit amet elit laoreet fermentum in consequat ipsum. In accumsan turpis sit amet massa sollicitudin tempor. Nullam lectus tellus, vehicula id aliquam sit amet, dictum et turpis."
-      />
-      <PostBrief
-        author="Emil Beski"
-        date="14 kwietnia 2023"
-        title="Samochodem przez Tatry - lipiec 2022"
-        image={postImg}
-        briefText="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque consequat magna sit amet elit laoreet fermentum in consequat ipsum. In accumsan turpis sit amet massa sollicitudin tempor. Nullam lectus tellus, vehicula id aliquam sit amet, dictum et turpis."
-      />
-      <PostBrief
-        author="Emil Beski"
-        date="14 kwietnia 2023"
-        title="Samochodem przez Tatry - lipiec 2022"
-        image={postImg}
-        briefText="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque consequat magna sit amet elit laoreet fermentum in consequat ipsum. In accumsan turpis sit amet massa sollicitudin tempor. Nullam lectus tellus, vehicula id aliquam sit amet, dictum et turpis."
-      />
+      {postsData.length > 0 &&
+        postsData.map(post => (
+          <PostBrief
+            author={`${post.user.name} ${post.user.lastname}`}
+            createdAt={post.createdAt}
+            title={post.title}
+            cover={post.cover}
+            briefText={post.text}
+            key={`${post.user.name}-${post.user.lastname}-${post.title}`}
+          />
+        ))}
     </main>
   );
 };

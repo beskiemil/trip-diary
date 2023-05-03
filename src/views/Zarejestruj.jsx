@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '../components/molecules/Button';
 import Input from '../components/molecules/Input';
-import { UserContext } from '../Providers/UserProvider';
+import { AuthContext } from '../Providers/AuthProvider';
 
 const Zarejestruj = () => {
   const [formValues, setFormValues] = useState({
@@ -21,7 +21,7 @@ const Zarejestruj = () => {
     password: '',
     confirmPassword: ''
   });
-  const { setUserInfo } = useContext(UserContext);
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleInputChange = e => {
@@ -31,84 +31,70 @@ const Zarejestruj = () => {
   const handleUserRegister = async e => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:3000/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: formValues.name,
-        lastname: formValues.lastname,
-        email: formValues.email,
-        password: formValues.password
-      })
-    });
-    if (response.status === 409) {
+    if (formValues.password !== formValues.confirmPassword) {
       setFormErrors({
         ...formErrors,
-        email: 'Podany adres email już istnieje.'
+        confirmPassword: 'Wpisane hasła są różne'
       });
+      return;
     }
-    if (response.status === 200) {
-      response.json().then(data => {
-        setUserInfo({
-          id: data.id,
-          name: data.name,
-          lastname: data.lastname,
-          email: data.email
-        });
-      });
-      return navigate('/');
-    }
-    return null;
+
+    const errors = await register(formValues);
+    if (errors !== null) setFormErrors(errors);
+    else navigate('/');
   };
 
   return (
     <form
       onSubmit={handleUserRegister}
-      className="flex max-w-[15rem] flex-col gap-5"
+      className="max-w-1/3 flex flex-col gap-5"
     >
       <Input
         type="name"
+        label="Imię"
         id="name"
         name="name"
-        placeholder="imię"
+        placeholder="Jan"
         value={formValues.name}
         onChange={handleInputChange}
         error={formErrors.name}
       />
       <Input
         type="lastname"
+        label="Nazwisko"
         id="lastname"
         name="lastname"
-        placeholder="nazwisko"
+        placeholder="Kowalski"
         value={formValues.lastname}
         onChange={handleInputChange}
         error={formErrors.lastname}
       />
       <Input
         type="email"
+        label="E-mail"
         id="email"
         name="email"
-        placeholder="e-mail"
+        placeholder="jan.kowalski@email.com"
         value={formValues.email}
         onChange={handleInputChange}
         error={formErrors.email}
       />
       <Input
         type="password"
+        label="Hasło"
         id="password"
         name="password"
-        placeholder="hasło"
+        placeholder="qweRTY123!@#"
         value={formValues.password}
         onChange={handleInputChange}
         error={formErrors.password}
       />
       <Input
         type="password"
+        label="Powtórz hasło"
         id="confirmPassword"
         name="confirmPassword"
-        placeholder="powtórz hasło"
+        placeholder="qweRTY123!@#"
         value={formValues.confirmPassword}
         onChange={handleInputChange}
         error={formErrors.confirmPassword}
